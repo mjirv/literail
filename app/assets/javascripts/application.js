@@ -17,4 +17,5 @@
 //= require react_ujs
 //= require react_bootstrap
 //= require components
+//= require react-md-editor
 //= require_tree .

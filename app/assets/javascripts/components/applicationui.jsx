@@ -32,7 +32,7 @@ var Index = React.createClass({
                                 {this.props.posts.map(function(post) {
                                     return (
                                         <Panel key={post.id} header=<h3>{post.title}</h3>>
-                                            <p>{post.text}</p>
+                                            <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
                                         </Panel>
                                     );
                                 })}
