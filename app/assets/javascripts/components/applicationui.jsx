@@ -11,6 +11,8 @@ var Nav = ReactBootstrap.Nav;
 var NavItem = ReactBootstrap.NavItem;
 var Tab = ReactBootstrap.Tab;
 var Row = ReactBootstrap.Row;
+var SplitButton = ReactBootstrap.SplitButton;
+var MenuItem = ReactBootstrap.MenuItem;
 
 var Index = React.createClass({
     getInitialState() {
@@ -20,8 +22,27 @@ var Index = React.createClass({
             pageNumber: 1
         }
     },
+
+    deletePost(post) {
+        $.ajax({
+            url: "/posts/" + post.id,
+            dataType: 'json',
+            type: 'DELETE',
+
+            success: function() {
+                //TODO: Fix this
+                this.setState(this.getInitialState());
+            }.bind(this),
+
+            error: function() {
+                console.log("An error occured.");
+            }
+
+        });
+    },
  
     render: function() {
+        var self = this;
         return (
             <Tab.Container id="tab-container" defaultActiveKey={1}>
                 <Row>
@@ -33,6 +54,10 @@ var Index = React.createClass({
                                     return (
                                         <Panel key={post.id} header=<h3>{post.title}</h3>>
                                             <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
+                                        <ButtonGroup bsSize="xsmall">
+                                            <Button bsStyle="warning">Edit</Button>
+                                            <Button bsStyle="danger" onClick={self.deletePost.bind(self, post)}>Delete</Button>
+                                        </ButtonGroup>
                                         </Panel>
                                     );
                                 })}

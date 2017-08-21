@@ -19,8 +19,19 @@ class PostsController < ApplicationController
         # Shows an individual post
     end
 
+    def destroy
+        if Post.delete(post_delete_params)
+            return true
+        end
+        return false
+    end
+
     private
         def post_params
             params.require(:newpost).permit(:title, :text)
+        end
+
+        def post_delete_params
+            params.require(:id)
         end
 end
