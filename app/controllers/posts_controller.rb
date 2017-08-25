@@ -12,7 +12,9 @@ class PostsController < ApplicationController
         # Creates a new post
         @post = Post.new(post_params)
 
-        @post.save
+        if @post.save
+            render json: {id: @post.id}, status: :ok
+        end
     end
 
     def show
@@ -21,7 +23,7 @@ class PostsController < ApplicationController
 
     def destroy
         if Post.delete(post_delete_params)
-            return true
+            render json: {id: post_delete_params}, status: :ok
         end
         return false
     end

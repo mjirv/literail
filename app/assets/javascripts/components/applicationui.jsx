@@ -17,7 +17,7 @@ var MenuItem = ReactBootstrap.MenuItem;
 var Index = React.createClass({
     getInitialState() {
         return {
-            posts: [],
+            posts: this.props.posts,
             sitetitle: "",
             pageNumber: 1
         }
@@ -29,9 +29,10 @@ var Index = React.createClass({
             dataType: 'json',
             type: 'DELETE',
 
-            success: function() {
+            success: function(res) {
                 //TODO: Fix this
-                this.setState(this.getInitialState());
+                // document.getElementById("post-" + post.id).style.visibility = "hidden";
+                this.setState({posts: this.state.posts.filter(post => post.id != res.id)});
             }.bind(this),
 
             error: function() {
@@ -39,6 +40,10 @@ var Index = React.createClass({
             }
 
         });
+    },
+
+    newPostCallback(newPost) {
+        this.setState({posts: this.state.posts.concat([newPost])});
     },
  
     render: function() {
@@ -50,9 +55,9 @@ var Index = React.createClass({
                     <Tab.Content animation={false}>
                         <Tab.Pane eventKey={1}>
                             <Panel>
-                                {this.props.posts.map(function(post) {
+                                {this.state.posts.map(function(post) {
                                     return (
-                                        <Panel key={post.id} header=<h3>{post.title}</h3>>
+                                        <Panel id={"post-" + post.id} key={post.id} header=<h3>{post.title}</h3>>
                                             <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
                                         <ButtonGroup bsSize="xsmall">
                                             <Button bsStyle="warning">Edit</Button>
@@ -64,7 +69,7 @@ var Index = React.createClass({
                             </Panel>
                         </Tab.Pane>
                         <Tab.Pane eventKey={2}>
-                            <NewPost/>
+                            <NewPost newPostCallback={this.newPostCallback}/>
                         </Tab.Pane>
                     </Tab.Content>
                 </Row>
@@ -101,8 +106,10 @@ var NewPost = React.createClass({
             type: 'POST',
             data: {newpost: {title: this.state.title, text: this.state.text}},
 
-            success: function() {
-                this.setState({title: "Success!"})
+            success: function(res) {
+                document.getElementById("tab-container-tab-1").click();
+                this.props.newPostCallback({title: this.state.title, text: this.state.text, id: res.id});
+                this.setState(this.getInitialState());
             }.bind(this),
 
             error: function() {
@@ -110,7 +117,7 @@ var NewPost = React.createClass({
             }
         });
     },
-    
+
     handleTitleChange(e) {
         this.setState({ title: e.target.value });
     },
