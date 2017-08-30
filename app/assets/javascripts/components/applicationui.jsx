@@ -19,7 +19,13 @@ var Index = React.createClass({
         return {
             posts: this.props.posts,
             sitetitle: "",
-            pageNumber: 1
+            pageNumber: 1,
+            defaultPost: {
+                id: null,
+                title: "",
+                text: ""
+            },
+            newPostLabel: "New Post"
         }
     },
 
@@ -30,8 +36,6 @@ var Index = React.createClass({
             type: 'DELETE',
 
             success: function(res) {
-                //TODO: Fix this
-                // document.getElementById("post-" + post.id).style.visibility = "hidden";
                 this.setState({posts: this.state.posts.filter(post => post.id != res.id)});
             }.bind(this),
 
@@ -42,8 +46,17 @@ var Index = React.createClass({
         });
     },
 
+    editPost(post) {
+        this.setState({defaultPost: {id: post.id, title: post.title, text: post.text}, newPostLabel: "Edit Post"});
+        document.getElementById("tab-container-tab-2").click();
+    },
+
     newPostCallback(newPost) {
         this.setState({posts: this.state.posts.concat([newPost])});
+    },
+
+    homeProps() {
+        this.setState({defaultPost: {id: null, title: "", text: ""}, newPostLabel: "New Post"});
     },
  
     render: function() {
@@ -51,7 +64,7 @@ var Index = React.createClass({
         return (
             <Tab.Container id="tab-container" defaultActiveKey={1}>
                 <Row>
-                    <NavInstance page={1}/>
+                    <NavInstance page={1} homeProps={this.homeProps} newPostLabel={this.state.newPostLabel}/>
                     <Tab.Content animation={false}>
                         <Tab.Pane eventKey={1}>
                             <Panel>
@@ -60,7 +73,7 @@ var Index = React.createClass({
                                         <Panel id={"post-" + post.id} key={post.id} header=<h3>{post.title}</h3>>
                                             <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
                                         <ButtonGroup bsSize="xsmall">
-                                            <Button bsStyle="warning">Edit</Button>
+                                            <Button bsStyle="warning" onClick={self.editPost.bind(self, post)}>Edit</Button>
                                             <Button bsStyle="danger" onClick={self.deletePost.bind(self, post)}>Delete</Button>
                                         </ButtonGroup>
                                         </Panel>
@@ -69,7 +82,7 @@ var Index = React.createClass({
                             </Panel>
                         </Tab.Pane>
                         <Tab.Pane eventKey={2}>
-                            <NewPost newPostCallback={this.newPostCallback}/>
+                            <NewPost newPostCallback={this.newPostCallback} defaultPost={this.state.defaultPost}/>
                         </Tab.Pane>
                     </Tab.Content>
                 </Row>
@@ -82,8 +95,8 @@ var NavInstance = React.createClass({
     render: function() {
         return (
             <Nav bsStyle="pills" style={{paddingBottom: '5px'}}>
-                <NavItem eventKey={1}>Home</NavItem>
-                <NavItem eventKey={2}>New Post</NavItem>
+                <NavItem eventKey={1} onClick={this.props.homeProps}>Home</NavItem>
+                <NavItem eventKey={2}>{this.props.newPostLabel}</NavItem>
             </Nav>
         );
     }
@@ -92,12 +105,13 @@ var NavInstance = React.createClass({
 var NewPost = React.createClass({
     getInitialState() {
         return {
-            title: '',
-            text: ''
+            title: this.props.defaultPost.title,
+            text: this.props.defaultPost.text,
+            id: this.props.defaultPost.id
         };
     },
 
-    submitPost(e) {
+    submitNewPost(e) {
         e.preventDefault();
 
         $.ajax({
@@ -118,6 +132,25 @@ var NewPost = React.createClass({
         });
     },
 
+    submitEditPost(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: "/posts/" + this.props.defaultPost.id,
+            dataType: "json",
+            type: 'PATCH',
+            data: {newpost: {title: this.state.title, text: this.state.text}},
+
+            success: function(res) {
+                document.getElementById("tab-container-tab-1").click();
+            }.bind(this),
+
+            error: function() {
+                console.log("An error occured.");
+            }
+        });
+    },
+
     handleTitleChange(e) {
         this.setState({ title: e.target.value });
     },
@@ -127,10 +160,15 @@ var NewPost = React.createClass({
     },
 
     render: function() {
+        // Check if we have to re-set state because we're editing a post
+        if (this.props.defaultPost.id && !(this.state.title) && !(this.state.text)) {
+            this.setState(this.getInitialState());    
+        };
+
         return (
             <div>
                 <Panel>
-                    <Form id="new-post" onSubmit={this.submitPost}>
+                    <Form id="new-post" onSubmit={this.props.defaultPost.id ? this.submitEditPost : this.submitNewPost}>
                         <FormGroup
                             controlId="formBasicText"
                         >
@@ -157,13 +195,13 @@ var NewPost = React.createClass({
                                     <Button type="submit" bsStyle="primary">
                                         Post
                                     </Button>
-                                    <Button>
+                                    {/*<Button>
                                         Save
-                                    </Button>
+                                    </Button>*/}
                                 </ButtonGroup>
                                 <ButtonGroup>
                                     <Button bsStyle="danger">
-                                        Delete
+                                        Cancel
                                     </Button>
                                 </ButtonGroup>
                             </ButtonToolbar>

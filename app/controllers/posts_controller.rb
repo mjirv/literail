@@ -21,6 +21,14 @@ class PostsController < ApplicationController
         # Shows an individual post
     end
 
+    def update
+        # Updates a posti
+        if Post.find(params[:id]).update(post_params)
+            render json: {id: params[:id]}, status: :ok
+        end
+        return false
+    end
+
     def destroy
         if Post.delete(post_delete_params)
             render json: {id: post_delete_params}, status: :ok
