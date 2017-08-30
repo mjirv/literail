@@ -103,11 +103,13 @@ var NavInstance = React.createClass({
 });
 
 var NewPost = React.createClass({
-    getInitialState() {
+    getInitialState(nextProps={defaultPost: {title: null, text: null, id: null}}) {
+        console.log("hello");
+        console.log(nextProps);
         return {
-            title: this.props.defaultPost.title,
-            text: this.props.defaultPost.text,
-            id: this.props.defaultPost.id
+            title: nextProps.defaultPost.title ? nextProps.defaultPost.title : this.props.defaultPost.title,
+            text: nextProps.defaultPost.text ? nextProps.defaultPost.text : this.props.defaultPost.text,
+            id: nextProps.defaultPost.id ? nextProps.defaultPost.id : this.props.defaultPost.id
         };
     },
 
@@ -136,7 +138,7 @@ var NewPost = React.createClass({
         e.preventDefault();
 
         $.ajax({
-            url: "/posts/" + this.props.defaultPost.id,
+            url: "/posts/" + this.state.id,
             dataType: "json",
             type: 'PATCH',
             data: {newpost: {title: this.state.title, text: this.state.text}},
@@ -159,16 +161,19 @@ var NewPost = React.createClass({
         this.setState({ text: e.target.value});
     },
 
-    render: function() {
+    componentWillReceiveProps(nextProps) {
         // Check if we have to re-set state because we're editing a post
-        if (this.props.defaultPost.id && !(this.state.title) && !(this.state.text)) {
-            this.setState(this.getInitialState());    
-        };
+        //if (nextProps.defaultPost.id && !(this.state.title) && !(this.state.text)) {
+                this.setState(this.getInitialState(nextProps));
+        //};
+        console.log(nextProps);
+    },
 
+    render: function() {
         return (
             <div>
                 <Panel>
-                    <Form id="new-post" onSubmit={this.props.defaultPost.id ? this.submitEditPost : this.submitNewPost}>
+                    <Form id="new-post" onSubmit={this.state.id ? this.submitEditPost : this.submitNewPost}>
                         <FormGroup
                             controlId="formBasicText"
                         >
