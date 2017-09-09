@@ -16,6 +16,7 @@ var MenuItem = ReactBootstrap.MenuItem;
 
 var Index = React.createClass({
     getInitialState() {
+        console.log(this.props.is_admin)
         return {
             posts: this.props.posts,
             sitetitle: "",
@@ -25,7 +26,8 @@ var Index = React.createClass({
                 title: "",
                 text: ""
             },
-            newPostLabel: "New Post"
+            newPostLabel: "New Post",
+            isAdmin: this.props.is_admin
         }
     },
 
@@ -64,7 +66,9 @@ var Index = React.createClass({
         return (
             <Tab.Container id="tab-container" defaultActiveKey={1}>
                 <Row>
-                    <NavInstance page={1} homeProps={this.homeProps} newPostLabel={this.state.newPostLabel}/>
+                    <NavInstance page={1} homeProps={this.homeProps} newPostLabel={this.state.newPostLabel}
+                        isAdmin={self.state.isAdmin}
+                    />
                     <Tab.Content animation={false}>
                         <Tab.Pane eventKey={1}>
                             <Panel>
@@ -72,10 +76,12 @@ var Index = React.createClass({
                                     return (
                                         <Panel id={"post-" + post.id} key={post.id} header=<h3>{post.title}</h3>>
                                             <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
-                                        <ButtonGroup bsSize="xsmall">
-                                            <Button bsStyle="warning" onClick={self.editPost.bind(self, post)}>Edit</Button>
-                                            <Button bsStyle="danger" onClick={self.deletePost.bind(self, post)}>Delete</Button>
-                                        </ButtonGroup>
+                                                {self.state.isAdmin &&
+                                                    <ButtonGroup bsSize="xsmall">
+                                                        <Button bsStyle="warning" onClick={self.editPost.bind(self, post)}>Edit</Button>
+                                                        <Button bsStyle="danger" onClick={self.deletePost.bind(self, post)}>Delete</Button>
+                                                    </ButtonGroup>
+                                                }
                                         </Panel>
                                     );
                                 })}
@@ -96,7 +102,9 @@ var NavInstance = React.createClass({
         return (
             <Nav bsStyle="pills" style={{paddingBottom: '5px'}}>
                 <NavItem eventKey={1} onClick={this.props.homeProps}>Home</NavItem>
+                { this.props.isAdmin &&
                 <NavItem eventKey={2}>{this.props.newPostLabel}</NavItem>
+                }
             </Nav>
         );
     }

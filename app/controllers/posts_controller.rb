@@ -1,6 +1,10 @@
 class PostsController < ApplicationController
     def index
         # Lists all posts (blog homepage)
+        @is_admin = false
+        if admin_param['admin_token'] == ENV['ADMIN_TOKEN']
+            @is_admin = true
+        end
         @posts = Post.all
     end
 
@@ -37,6 +41,9 @@ class PostsController < ApplicationController
     end
 
     private
+        def admin_param
+            params.permit(:admin_token)
+        end
         def post_params
             params.require(:newpost).permit(:title, :text)
         end
