@@ -16,7 +16,6 @@ var MenuItem = ReactBootstrap.MenuItem;
 
 var Index = React.createClass({
     getInitialState() {
-        console.log(this.props.is_admin)
         return {
             posts: this.props.posts,
             sitetitle: "",
@@ -112,8 +111,6 @@ var NavInstance = React.createClass({
 
 var NewPost = React.createClass({
     getInitialState(nextProps={defaultPost: {title: null, text: null, id: null}}) {
-        console.log("hello");
-        console.log(nextProps);
         return {
             title: nextProps.defaultPost.title ? nextProps.defaultPost.title : this.props.defaultPost.title,
             text: nextProps.defaultPost.text ? nextProps.defaultPost.text : this.props.defaultPost.text,
@@ -174,7 +171,6 @@ var NewPost = React.createClass({
         //if (nextProps.defaultPost.id && !(this.state.title) && !(this.state.text)) {
                 this.setState(this.getInitialState(nextProps));
         //};
-        console.log(nextProps);
     },
 
     render: function() {

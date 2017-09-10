@@ -60,8 +60,6 @@ GEM
       railties (>= 3.2, < 5.2)
     erubis (2.7.0)
     execjs (2.7.0)
-    faraday (0.13.1)
-      multipart-post (>= 1.2, < 3)
     ffi (1.9.18-x86-mingw32)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -84,7 +82,6 @@ GEM
     mini_portile2 (2.2.0)
     minitest (5.10.3)
     multi_json (1.12.1)
-    multipart-post (2.0.0)
     nio4r (2.1.0)
     nokogiri (1.8.0-x86-mingw32)
       mini_portile2 (~> 2.2.0)
@@ -164,10 +161,6 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (2.0)
-      activesupport (>= 4.2)
-      multi_json (~> 1.2)
-      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -179,7 +172,6 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.2)
   dotenv-rails
-  faraday
   jbuilder (~> 2.5)
   jquery-rails
   puma (~> 3.0)
@@ -192,7 +184,6 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
-  webpacker
 
 BUNDLED WITH
    1.13.7
