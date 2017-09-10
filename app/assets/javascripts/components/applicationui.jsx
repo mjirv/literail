@@ -128,9 +128,9 @@ var NewPost = React.createClass({
             data: {newpost: {title: this.state.title, text: this.state.text}},
 
             success: function(res) {
-                document.getElementById("tab-container-tab-1").click();
                 this.props.newPostCallback({title: this.state.title, text: this.state.text, id: res.id});
-                this.setState(this.getInitialState());
+                document.getElementById("tab-container-tab-1").click();
+                //this.setState(this.getInitialState());
             }.bind(this),
 
             error: function() {
