@@ -71,7 +71,7 @@ var Index = React.createClass({
                     <Tab.Content animation={false}>
                         <Tab.Pane eventKey={1}>
                             <Panel>
-                                {this.state.posts.map(function(post) {
+                                {this.state.posts.reverse().map(function(post) {
                                     return (
                                         <Panel id={"post-" + post.id} key={post.id} header=<h3>{post.title}</h3>>
                                             <div dangerouslySetInnerHTML={{__html: marked(post.text, {sanitize: true})}} />
